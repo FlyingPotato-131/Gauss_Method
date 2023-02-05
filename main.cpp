@@ -61,7 +61,10 @@ int main(){
     std::cout << std::endl;
     matrix_out(mtr);
 
+    std::cout << std::endl << "Converting to triangle form" << std::endl << std::endl;
     gauss_algo_first_part(mtr);
+    std::cout << std::endl << "Converting to diagonal form" << std::endl;
     gauss_fin(mtr);
+    std::cout << "Done" << std::endl;
     // matrix_out(mtr);
 }

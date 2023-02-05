@@ -48,6 +48,7 @@ void matrix_answers_out(const Matrix& matrix)
 // деление строки, применяется непосредственно в методе Гаусса
 void matrix_line_division(Matrix& matrix, unsigned int line, float scalar)
 {
+    std::cout << "divide line " << line << " by " << scalar << std::endl;
     for (unsigned int i = 0; i < matrix.columns; i++)
     {
         matrix.matrix_body[line][i] /= scalar;
@@ -60,6 +61,7 @@ void matrix_line_division(Matrix& matrix, unsigned int line, float scalar)
 // вычитание строк друг из друга, возможно домножение
 void matrix_line_subtraction(Matrix& matrix, unsigned int line_1, unsigned int line_2, float koefficient=1)
 {
+    std::cout << "subtract " << koefficient << " * line " << line_1 << " from line " << line_2 << std::endl;
     for (unsigned int i = 0; i < matrix.columns; i++)
     {
         matrix.matrix_body[line_2][i] -= matrix.matrix_body[line_1][i] * koefficient;
@@ -72,6 +74,7 @@ void matrix_line_subtraction(Matrix& matrix, unsigned int line_1, unsigned int l
 // замена строк местами
 void matrix_line_swap(Matrix& matrix, unsigned int line_1, unsigned int line_2)
 {
+    std::cout << "swap lines " << line_1 << " and " << line_2 << std::endl;
     std::vector <float> swap_line(matrix.columns);
     float swap_value;
 
@@ -79,7 +82,7 @@ void matrix_line_swap(Matrix& matrix, unsigned int line_1, unsigned int line_2)
     matrix.matrix_body[line_1] = matrix.matrix_body[line_2];
     matrix.matrix_body[line_2] = swap_line;
 
-    swap_value = matrix.addition[line_1];
+    //swap_value = matrix.addition[line_1];
     // matrix.addition[line_1] = matrix.addition[line_2];
     // matrix.addition[line_2] = swap_value;
 }
@@ -131,6 +134,7 @@ void gauss_algo_first_part(Matrix& matrix)
 
         std::cout << std::endl;
         matrix_out(matrix);
+        std::cout << std::endl;
     }
 }
 
@@ -139,12 +143,17 @@ void gauss_fin(Matrix& mtr){
     unsigned int size = 0;
     while(mtr.matrix_body[size][size] != 0){
         size++;
+        if(size == std::min(mtr.rows, mtr.columns)){
+            break;
+        }
     }
 
     for(unsigned int h = size - 1; h != 4294967295; h--){
         for(unsigned int w = h + 1; w < size; w++){
             matrix_line_subtraction(mtr, w, h, mtr.matrix_body[h][w]);
         }
+
+        std::cout << std::endl;
         matrix_out(mtr);
         std::cout << std::endl;
     }
