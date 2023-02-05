@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
 
 struct Matrix
 {
@@ -11,6 +12,7 @@ struct Matrix
     std::vector < float > addition; // дополнение матрицы
     std::vector < float > roots; // вектор ответов
     unsigned int rows; // количество строк
+    unsigned int columns; // количество столбцов
     // float determinant; // определитель матрицы
     /*
     пока не подберу адекватный по ассимтотике алгоритм для детерминанта, тут будет коммент вместо поля определителя
@@ -22,12 +24,13 @@ void matrix_out(const Matrix& matrix)
 {
     for (unsigned int i = 0; i < matrix.rows; i++)
     {
-        for (int j = 0; j < matrix.rows; j++)
+        for (int j = 0; j < matrix.columns; j++)
         {
-            std::cout << matrix.matrix_body[i][j] << ' ';
+            std::cout << std::setw(5) << matrix.matrix_body[i][j];
         }
+        std::cout << std::endl;
 
-        std::cout << "  |\t" <<  matrix.addition[i] << std::endl;
+        // std::cout << "  |\t" <<  matrix.addition[i] << std::endl;
     }
 }
 
@@ -45,31 +48,31 @@ void matrix_answers_out(const Matrix& matrix)
 // деление строки, применяется непосредственно в методе Гаусса
 void matrix_line_division(Matrix& matrix, unsigned int line, float scalar)
 {
-    for (unsigned int i = 0; i < matrix.rows; i++)
+    for (unsigned int i = 0; i < matrix.columns; i++)
     {
         matrix.matrix_body[line][i] /= scalar;
     }
 
-    matrix.addition[line] /= scalar;
+    // matrix.addition[line] /= scalar;
 }
 
 
 // вычитание строк друг из друга, возможно домножение
 void matrix_line_subtraction(Matrix& matrix, unsigned int line_1, unsigned int line_2, float koefficient=1)
 {
-    for (unsigned int i = 0; i < matrix.rows; i++)
+    for (unsigned int i = 0; i < matrix.columns; i++)
     {
         matrix.matrix_body[line_2][i] -= matrix.matrix_body[line_1][i] * koefficient;
     }
 
-    matrix.addition[line_2] -= matrix.addition[line_1] * koefficient;
+    // matrix.addition[line_2] -= matrix.addition[line_1] * koefficient;
 }
 
 
 // замена строк местами
 void matrix_line_swap(Matrix& matrix, unsigned int line_1, unsigned int line_2)
 {
-    std::vector <float> swap_line(matrix.rows);
+    std::vector <float> swap_line(matrix.columns);
     float swap_value;
 
     swap_line = matrix.matrix_body[line_1];
@@ -77,8 +80,8 @@ void matrix_line_swap(Matrix& matrix, unsigned int line_1, unsigned int line_2)
     matrix.matrix_body[line_2] = swap_line;
 
     swap_value = matrix.addition[line_1];
-    matrix.addition[line_1] = matrix.addition[line_2];
-    matrix.addition[line_2] = swap_value;
+    // matrix.addition[line_1] = matrix.addition[line_2];
+    // matrix.addition[line_2] = swap_value;
 }
 
 
@@ -110,8 +113,8 @@ void gauss_algo_first_part(Matrix& matrix)
             
             if (result == 0) // если поменять строку с нулем не получилось, то матрицу решить не получится, завершаем программу
             {
-                std::cout << "Matrix cannot be solved" << std::endl;
-                exit(0);
+                // std::cout << "matrix has been simplified" << std::endl;
+                break;
             }
         }  
 
@@ -125,6 +128,25 @@ void gauss_algo_first_part(Matrix& matrix)
         {
             matrix_line_subtraction(matrix, element_index_now, i, matrix.matrix_body[i][element_index_now]);
         }
+
+        std::cout << std::endl;
+        matrix_out(matrix);
+    }
+}
+
+//преобразовать до единичной
+void gauss_fin(Matrix& mtr){
+    unsigned int size = 0;
+    while(mtr.matrix_body[size][size] != 0){
+        size++;
+    }
+
+    for(unsigned int h = size - 1; h != 4294967295; h--){
+        for(unsigned int w = h + 1; w < size; w++){
+            matrix_line_subtraction(mtr, w, h, mtr.matrix_body[h][w]);
+        }
+        matrix_out(mtr);
+        std::cout << std::endl;
     }
 }
 
