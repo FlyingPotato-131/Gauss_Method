@@ -5,12 +5,21 @@
 #include <vector>
 #include <cmath>
 #include <iomanip>
+#include "fraction.hpp"
+
+// struct floatmatrix{
+//     std::vector < std::vector <fraction> > matrix_body; // тело матрицы
+//     std::vector < fraction > addition; // дополнение матрицы
+//     std::vector < fraction > roots; // вектор ответов
+//     unsigned int rows; // количество строк
+//     unsigned int columns; // количество столбцов
+// }
 
 struct Matrix
 {
-    std::vector < std::vector <float> > matrix_body; // тело матрицы
-    std::vector < float > addition; // дополнение матрицы
-    std::vector < float > roots; // вектор ответов
+    std::vector < std::vector <fraction> > matrix_body; // тело матрицы
+    std::vector < fraction > addition; // дополнение матрицы
+    std::vector < fraction > roots; // вектор ответов
     unsigned int rows; // количество строк
     unsigned int columns; // количество столбцов
     // float determinant; // определитель матрицы
@@ -46,7 +55,7 @@ void matrix_answers_out(const Matrix& matrix)
 }
 
 // деление строки, применяется непосредственно в методе Гаусса
-void matrix_line_division(Matrix& matrix, unsigned int line, float scalar)
+void matrix_line_division(Matrix& matrix, unsigned int line, fraction scalar)
 {
     std::cout << "divide line " << line << " by " << scalar << std::endl;
     for (unsigned int i = 0; i < matrix.columns; i++)
@@ -59,7 +68,7 @@ void matrix_line_division(Matrix& matrix, unsigned int line, float scalar)
 
 
 // вычитание строк друг из друга, возможно домножение
-void matrix_line_subtraction(Matrix& matrix, unsigned int line_1, unsigned int line_2, float koefficient=1)
+void matrix_line_subtraction(Matrix& matrix, unsigned int line_1, unsigned int line_2, fraction koefficient=frac(1))
 {
     std::cout << "subtract " << koefficient << " * line " << line_1 << " from line " << line_2 << std::endl;
     for (unsigned int i = 0; i < matrix.columns; i++)
@@ -75,8 +84,8 @@ void matrix_line_subtraction(Matrix& matrix, unsigned int line_1, unsigned int l
 void matrix_line_swap(Matrix& matrix, unsigned int line_1, unsigned int line_2)
 {
     std::cout << "swap lines " << line_1 << " and " << line_2 << std::endl;
-    std::vector <float> swap_line(matrix.columns);
-    float swap_value;
+    std::vector <fraction> swap_line(matrix.columns);
+    // fraction swap_value;
 
     swap_line = matrix.matrix_body[line_1];
     matrix.matrix_body[line_1] = matrix.matrix_body[line_2];
@@ -93,7 +102,7 @@ int matrix_zero_change(Matrix& matrix, unsigned int line, unsigned int koefficie
 {
     for (unsigned int i = line + 1; i < matrix.rows; i++)
     {
-        if (matrix.matrix_body[i][koefficient_number] != 0)
+        if (matrix.matrix_body[i][koefficient_number] != frac(0))
         {
             matrix_line_swap(matrix, line, i);
             return 1;
@@ -110,7 +119,7 @@ void gauss_algo_first_part(Matrix& matrix)
     for (unsigned int element_index_now = 0; element_index_now < matrix.rows; element_index_now++)
     {
         // проверим на ноль элемент на диагонали
-        if (matrix.matrix_body[element_index_now][element_index_now] == 0) // в случае нахождении нуля на диагонали заменяем его
+        if (matrix.matrix_body[element_index_now][element_index_now] == frac(0)) // в случае нахождении нуля на диагонали заменяем его
         { 
             int result = matrix_zero_change(matrix, element_index_now, element_index_now);
             
@@ -141,7 +150,7 @@ void gauss_algo_first_part(Matrix& matrix)
 //преобразовать до единичной
 void gauss_fin(Matrix& mtr){
     unsigned int size = 0;
-    while(mtr.matrix_body[size][size] != 0){
+    while(mtr.matrix_body[size][size] != frac(0)){
         size++;
         if(size == std::min(mtr.rows, mtr.columns)){
             break;
@@ -164,7 +173,7 @@ void gauss_fin(Matrix& mtr){
 // обратный ход метода Гаусса
 void gauss_algo_second_part(Matrix& matrix)
 {
-    std::vector <float> answers(matrix.rows);
+    std::vector <fraction> answers(matrix.rows);
     matrix.roots = answers;
     matrix.roots[matrix.rows - 1] = matrix.addition[matrix.rows - 1];
     
@@ -183,48 +192,48 @@ void gauss_algo_second_part(Matrix& matrix)
 
 
 // функция детерминанта, но с кринжовой ассимптотикой (там вообще жесть, чет вроде факториал пополоам)
-float determinant(Matrix& matrix)
-{
-    float result = 0;
+// fraction determinant(Matrix& matrix)
+// {
+//     float result = 0;
 
-    /*
-    разделим реализацию на два случая
-    1) когда размер матрицы 2x2
-    2) остальные случаи
-    */
+//     /*
+//     разделим реализацию на два случая
+//     1) когда размер матрицы 2x2
+//     2) остальные случаи
+//     */
 
-    if (matrix.rows == 2)
-    {
-        return matrix.matrix_body[0][0] * matrix.matrix_body[1][1] - matrix.matrix_body[1][0] * matrix.matrix_body[0][1]; 
-    } // нашли детерминант в случае матрицы 2x2
+//     if (matrix.rows == 2)
+//     {
+//         return matrix.matrix_body[0][0] * matrix.matrix_body[1][1] - matrix.matrix_body[1][0] * matrix.matrix_body[0][1]; 
+//     } // нашли детерминант в случае матрицы 2x2
     
-    /*
-    если матрица не 2x2, то рекурсивно посчитаем сумму алгебраических дополнений
-    */
+//     /*
+//     если матрица не 2x2, то рекурсивно посчитаем сумму алгебраических дополнений
+//     */
 
 
-    for (int count = 0; count < matrix.rows; count++) // пройдемся по всем элементам первой строки и посчитаем для них алгебраические дополнения
-    {
-        Matrix new_matrix;
+//     for (int count = 0; count < matrix.rows; count++) // пройдемся по всем элементам первой строки и посчитаем для них алгебраические дополнения
+//     {
+//         Matrix new_matrix;
 
-        std::vector < std::vector <float> > new_matrix_body(matrix.rows - 1);
+//         std::vector < std::vector <float> > new_matrix_body(matrix.rows - 1);
 
-        for (int i = 1; i < matrix.rows; i++)
-        {
+//         for (int i = 1; i < matrix.rows; i++)
+//         {
 
-            for (int j = 0; j < matrix.rows; j++)
-            {
-                if (j != count) { new_matrix_body[i - 1].push_back(matrix.matrix_body[i][j]); }
-            }
-        }
-
-
-        new_matrix.matrix_body = new_matrix_body;
-        new_matrix.rows = matrix.rows - 1;
+//             for (int j = 0; j < matrix.rows; j++)
+//             {
+//                 if (j != count) { new_matrix_body[i - 1].push_back(matrix.matrix_body[i][j]); }
+//             }
+//         }
 
 
-        result += std::pow(-1, 2 + count) * matrix.matrix_body[0][count] * determinant(new_matrix); 
-    }
+//         new_matrix.matrix_body = new_matrix_body;
+//         new_matrix.rows = matrix.rows - 1;
 
-    return result;
-}
+
+//         result += std::pow(-1, 2 + count) * matrix.matrix_body[0][count] * determinant(new_matrix); 
+//     }
+
+//     return result;
+// }
