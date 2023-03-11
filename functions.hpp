@@ -26,7 +26,7 @@ void matrix_out(const Matrix& matrix)
     {
         for (int j = 0; j < matrix.columns; j++)
         {
-            std::cout << std::setw(5) << matrix.matrix_body[i][j];
+            std::cout << std::setprecision(3) << std::setw(8) << matrix.matrix_body[i][j];
         }
         std::cout << std::endl;
 
