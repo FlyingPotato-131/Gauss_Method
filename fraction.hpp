@@ -10,7 +10,7 @@ std::ostream &printfrac(std::ostream &out, fraction q){
 	if(q.den != 1)
 		std::cout << q.num << "/" << q.den;
 	else
-		std::cout << q.num;
+		std::cout << q.num << " " << " ";
 	return out;
 }
 
